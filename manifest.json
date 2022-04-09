@@ -1,0 +1,6 @@
+{
+  "name": "Web blocker",
+  "description": "Websites blocker extension for Google Chrome",
+  "version": "1.0",
+  "manifest_version": 3
+}
