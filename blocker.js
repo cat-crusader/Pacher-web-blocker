@@ -1,6 +1,7 @@
 //alert('you want to visit forbidden website!')
+const key ="websiteslist";
 
-
+// #region ErrorPageGenerators
 const generateStyle = ()=>{
     return``;
 }
@@ -13,23 +14,27 @@ const generateHTML = (pageName) =>{
     <div>WAS NOT FOUND</div>
 </div>`;
 }
+// #endregion
 
-var ourArray =["www.google.com"];
+var ourArray =["www.youtube.com"];
 var curPage = window.location.hostname;
-console.log(curPage);
-saveToLocalStorage(ourArray);
-ourArray = retrieveFromLocalStorage();
+
+setLocalStorage(ourArray);
+ourArray = getLocalStorage(key);
+console.log(ourArray);
 if(ourArray[0] == curPage)replaceContent(curPage);
 
-function saveToLocalStorage(ourArray){
-    localStorage.setItem("websiteslist",JSON.stringify(ourArray));
+
+//#region Getter&Setter
+function setLocalStorage(ourArray){
+    localStorage.setItem(key,JSON.stringify(ourArray));
 }
-function retrieveFromLocalStorage(){
-    var storedArray = localStorage.getItem("websiteslist");
+function getLocalStorage(key){
+    var storedArray = localStorage.getItem(key);
     ourArray = JSON.parse(storedArray);
     return ourArray;
 }
-
+//#endregion
 
 function replaceContent(url){
     document.head.innerHTML = generateStyle();
