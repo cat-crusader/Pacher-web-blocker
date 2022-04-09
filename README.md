@@ -1,0 +1,1 @@
+# Website blocker extension for Google Chrome browser
