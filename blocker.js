@@ -1,6 +1,46 @@
 //alert('you want to visit forbidden website!')
 const key ="websiteslist";
+var blockedPagesArray;
+var curPage = window.location.hostname;
 
+
+
+
+DeleteFromLocalStorage("google.com");
+ShowLocalStorage();
+
+function removeElementFromArray(element){
+    return blockedPagesArray.filter(function(value){
+        return value != element;
+    });
+}
+
+
+
+//#region LocalStorage Methods
+function AddToLocalStorage(url){
+    blockedPagesArray = GetLocalStorage(key);
+    blockedPagesArray.push(url);
+    SetLocalStorage(blockedPagesArray);
+}
+function DeleteFromLocalStorage(url){
+    blockedPagesArray = GetLocalStorage(key);
+    blockedPagesArray = removeElementFromArray(url);
+    SetLocalStorage(blockedPagesArray);
+}
+function SetLocalStorage(ourArray){
+    localStorage.setItem(key,JSON.stringify(ourArray));
+}
+function GetLocalStorage(){
+    var storedArray = localStorage.getItem(key);
+    ourArray = JSON.parse(storedArray);
+    return ourArray;
+}
+function ShowLocalStorage(){
+    blockedPagesArray = GetLocalStorage();
+    console.log(blockedPagesArray);
+}
+//#endregion
 // #region ErrorPageGenerators
 const generateStyle = ()=>{
     return``;
@@ -15,28 +55,8 @@ const generateHTML = (pageName) =>{
 </div>`;
 }
 // #endregion
-
-var ourArray =["www.youtube.com"];
-var curPage = window.location.hostname;
-
-setLocalStorage(ourArray);
-ourArray = getLocalStorage(key);
-console.log(ourArray);
-if(ourArray[0] == curPage)replaceContent(curPage);
-
-
-//#region Getter&Setter
-function setLocalStorage(ourArray){
-    localStorage.setItem(key,JSON.stringify(ourArray));
-}
-function getLocalStorage(key){
-    var storedArray = localStorage.getItem(key);
-    ourArray = JSON.parse(storedArray);
-    return ourArray;
-}
-//#endregion
-
-function replaceContent(url){
+function ReplaceContent(url){
     document.head.innerHTML = generateStyle();
     document.body.innerHTML = generateHTML(url);
 }
+//corrected some typos
