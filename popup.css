@@ -1,0 +1,20 @@
+.UrlBut{
+    border: none;
+    color: white;
+    width: 49%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    margin-top:3px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    
+
+}
+#remove{
+    background-color:crimson;
+}
+#add{
+    background-color:forestgreen;
+}

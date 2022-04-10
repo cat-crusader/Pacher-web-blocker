@@ -6,7 +6,7 @@ var curPage = window.location.hostname;
 
 
 
-DeleteFromLocalStorage("google.com");
+
 ShowLocalStorage();
 
 function removeElementFromArray(element){
