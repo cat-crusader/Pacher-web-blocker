@@ -1,42 +1,63 @@
 
 const key ="websiteslist";
-var blockedPagesArray;
-var curUrl;
+var blockedPagesArray = new Array();
 let addUrlButton    = document.getElementById("add");
 let removeUrlButton = document.getElementById("remove");
-let UrlInput = document.getElementById("kek");// if getElementById will always return null, wtf
+let UrlInput =        document.getElementById("input");// if getElementById will always return null, wtf
 
 
 
 ShowLocalStorage();
 
-chrome.storage.sync.get("color", ({ color }) => {
-  removeUrlButton.style.backgroundColor = color;
-});
+
+
+
+
+
+
+// const timer = setInterval(() => {
+//     const UrlInput = document.getElementById('input');
+//     if(UrlInput) {
+//       clearTimeout(timer);
+//       alert(UrlInput.value);
+//     }
+//   }, 150);
+
+ShowLocalStorage();
+
+
 
 document.addEventListener('DOMContentLoaded', documentEvents  , false);
 function documentEvents() {    
 
  //#region ButtonListeners
 if(addUrlButton){//          add button
-    addUrlButton.addEventListener("click",async()=>{
-        let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-        chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          function: AddUrlButtonClicked,
+    addUrlButton.addEventListener('click', async evt => {
+        evt.preventDefault(); // prevents `submit` event from reloading the popup
+        const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+        const text = document.getElementById('input').value;
+        await chrome.scripting.executeScript({
+          target: {tabId: tab.id},
+          func: (text) => {
+            AddUrlButtonClicked(text);
+          },
+          args: [ text],
         });
-    });
+      });
     }
     if(removeUrlButton){//      remove button
-        removeUrlButton.addEventListener("click",async()=>{
-            let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-        
-            chrome.scripting.executeScript({
-              target: { tabId: tab.id },
-              function: RemoveUrlButtonClicked,
+        removeUrlButton.addEventListener('click', async evt => {
+            evt.preventDefault(); // prevents `submit` event from reloading the popup
+            const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+            const text = document.getElementById('input').value;
+            await chrome.scripting.executeScript({
+              target: {tabId: tab.id},
+              func: (text) => {
+                RemoveUrlButtonClicked(text);
+              },
+              args: [ text],
             });
-        });
+          });
     }
 }
 
@@ -44,10 +65,11 @@ if(addUrlButton){//          add button
 
 
 //#endregion
-function AddUrlButtonClicked(){//currently use url of page
-
-    AddToLocalStorage(curUrl);
+function AddUrlButtonClicked(Url){//currently use url of page
+    console.log("add button clicked");
+    AddToLocalStorage(Url);
     ShowLocalStorage();
+
 
 }
 function RemoveUrlButtonClicked(){
@@ -76,7 +98,7 @@ function AddToLocalStorage(url){
 }
 function DeleteFromLocalStorage(url){
     blockedPagesArray = GetLocalStorage(key);
-    blockedPagesArray = removeElementFromArray(url);
+    if(blockedPagesArray)blockedPagesArray = removeElementFromArray(url);
     SetLocalStorage(blockedPagesArray);
 }
 function SetLocalStorage(ourArray){
@@ -85,7 +107,8 @@ function SetLocalStorage(ourArray){
 function GetLocalStorage(){
     var storedArray = localStorage.getItem(key);
     ourArray = JSON.parse(storedArray);
-    return ourArray;
+    if(ourArray!==null)return ourArray;
+    return new Array("");
 }
 function ShowLocalStorage(){
     blockedPagesArray = GetLocalStorage();
