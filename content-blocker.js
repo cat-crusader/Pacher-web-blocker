@@ -1,41 +1,66 @@
 
 const key ="websiteslist";
 var blockedPagesArray;
-var curPage = window.location.hostname;
+var curUrl;
 let addUrlButton    = document.getElementById("add");
 let removeUrlButton = document.getElementById("remove");
-let UrlInput = document.getElementById("url");
+let UrlInput = document.getElementById("kek");// if getElementById will always return null, wtf
 
-console.log("console started");
+
+
 ShowLocalStorage();
 
-//#region ButtonListeners
-if(addUrlButton){//          add button
-addUrlButton.addEventListener("click",async()=>{
-    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: AddUrlButtonClicked,
-    });
+chrome.storage.sync.get("color", ({ color }) => {
+  removeUrlButton.style.backgroundColor = color;
 });
-}
-if(removeUrlButton){//      remove button
-    removeUrlButton.addEventListener("click",async()=>{
+
+document.addEventListener('DOMContentLoaded', documentEvents  , false);
+function documentEvents() {    
+
+ //#region ButtonListeners
+if(addUrlButton){//          add button
+    addUrlButton.addEventListener("click",async()=>{
         let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
         chrome.scripting.executeScript({
           target: { tabId: tab.id },
-          function: RemoveUrlButtonClicked,
+          function: AddUrlButtonClicked,
         });
     });
+    }
+    if(removeUrlButton){//      remove button
+        removeUrlButton.addEventListener("click",async()=>{
+            let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              function: RemoveUrlButtonClicked,
+            });
+        });
+    }
 }
+
+
+
+
 //#endregion
-function AddUrlButtonClicked(){
-    
+function AddUrlButtonClicked(){//currently use url of page
+
+    AddToLocalStorage(curUrl);
+    ShowLocalStorage();
+
 }
 function RemoveUrlButtonClicked(){
-    
+
+    DeleteFromLocalStorage(curUrl);
+    ShowLocalStorage();
+
+}
+function GetCurrentUrl(){
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+        curUrl = tabs[0].url;
+        // use `url` here inside the callback because it's asynchronous!
+    });    
 }
 
 function removeElementFromArray(element){

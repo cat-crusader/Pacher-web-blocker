@@ -12,9 +12,20 @@
     
 
 }
+#text{
+    size: 14px;
+    clear: both;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+}
 #remove{
+    
+    float:right;
     background-color:crimson;
 }
 #add{
+    
+    float:left;
     background-color:forestgreen;
 }
