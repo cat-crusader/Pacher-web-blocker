@@ -1,23 +1,42 @@
 
 const key ="websiteslist";
 let blockedPagesArray;
+let CurrentPageUrl;
+
 let addUrlButton    = document.getElementById("add");
 let removeUrlButton = document.getElementById("remove");
 let UrlInput =        document.getElementById("input");// if getElementById will always return null, wtf
 
 
+// #region ErrorPageGenerators
+const generateStyle = ()=>{
+    return``;
+}
+const generateHTML = (pageName) =>{
+    return `
+<div class='c'>
+    <div>404</div>
+    <hr>
+    <div>THE PAGE</div>
+    <div>WAS NOT FOUND</div>
+</div>`;
+}
+// #endregion
+function ReplaceContent(url){
+    document.head.innerHTML = generateStyle();
+    document.body.innerHTML = generateHTML(url);
+}
 
 
 
 
-// const timer = setInterval(() => {
-//     const UrlInput = document.getElementById('input');
-//     if(UrlInput) {
-//       clearTimeout(timer);
-//       alert(UrlInput.value);
-//     }
-//   }, 150);
+
 ShowLocalStorage();
+
+GetCurrentPageUrl();
+CheckIfPageBanned();
+
+
 
 
 document.addEventListener('DOMContentLoaded', documentEvents  , false);
@@ -28,7 +47,7 @@ if(addUrlButton){//          add button
     addUrlButton.addEventListener('click', async evt => {
         evt.preventDefault(); // prevents `submit` event from reloading the popup
         const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
-        const text = document.getElementById('input').value;
+        const text = document.getElementById('input').value;// value from input
         await chrome.scripting.executeScript({
           target: {tabId: tab.id},
           func: (text) => {
@@ -112,25 +131,16 @@ function GetLocalStorage(){
 
 }
 function ShowLocalStorage(){
-    blockedPagesArray = [GetLocalStorage()];
+    blockedPagesArray = [...GetLocalStorage()];
     console.log("array:"+ blockedPagesArray);
 }
 //#endregion
-// #region ErrorPageGenerators
-const generateStyle = ()=>{
-    return``;
+function CheckIfPageBanned(){
+    blockedPagesArray = [...GetLocalStorage()];
+    const index = blockedPagesArray.indexOf(CurrentPageUrl);
+    console.log(CurrentPageUrl+index);
+    if(index>-1)ReplaceContent();
 }
-const generateHTML = (pageName) =>{
-    return `
-<div class='c'>
-    <div>404</div>
-    <hr>
-    <div>THE PAGE</div>
-    <div>WAS NOT FOUND</div>
-</div>`;
-}
-// #endregion
-function ReplaceContent(url){
-    document.head.innerHTML = generateStyle();
-    document.body.innerHTML = generateHTML(url);
+function GetCurrentPageUrl(){
+    CurrentPageUrl = window.location.toString();
 }
