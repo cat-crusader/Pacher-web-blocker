@@ -1,14 +1,9 @@
 
 const key ="websiteslist";
-var blockedPagesArray = new Array();
+let blockedPagesArray;
 let addUrlButton    = document.getElementById("add");
 let removeUrlButton = document.getElementById("remove");
 let UrlInput =        document.getElementById("input");// if getElementById will always return null, wtf
-
-
-
-ShowLocalStorage();
-
 
 
 
@@ -22,9 +17,7 @@ ShowLocalStorage();
 //       alert(UrlInput.value);
 //     }
 //   }, 150);
-
 ShowLocalStorage();
-
 
 
 document.addEventListener('DOMContentLoaded', documentEvents  , false);
@@ -66,53 +59,61 @@ if(addUrlButton){//          add button
 
 //#endregion
 function AddUrlButtonClicked(Url){//currently use url of page
-    console.log("add button clicked");
+    console.log("test");
     AddToLocalStorage(Url);
     ShowLocalStorage();
+    // let lol =["lol1","lol"];
+    // removeElementFromArray(lol,"lol");
+
 
 
 }
-function RemoveUrlButtonClicked(){
-
-    DeleteFromLocalStorage(curUrl);
+function RemoveUrlButtonClicked(Url){
+    console.log("remove button clicked");
+    DeleteFromLocalStorage(Url);
     ShowLocalStorage();
 
 }
-function GetCurrentUrl(){
-    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-        curUrl = tabs[0].url;
-        // use `url` here inside the callback because it's asynchronous!
-    });    
-}
-
-function removeElementFromArray(element){
-    return blockedPagesArray.filter(function(value){
-        return value != element;
-    });
+function removeElementFromArray(array,element){
+    const index = array.indexOf(element);
+    console.log(array);
+    console.log("index of "+element+index);
+    if (index > -1) {
+        array.splice(index, 1); // 2nd parameter means remove one item only
+    }
+    console.log(array);
+    return array;
 }
 //#region LocalStorage Methods
 function AddToLocalStorage(url){
-    blockedPagesArray = GetLocalStorage(key);
+
+    blockedPagesArray = [...GetLocalStorage()];
+    console.log("array:"+ blockedPagesArray);
     blockedPagesArray.push(url);
     SetLocalStorage(blockedPagesArray);
 }
 function DeleteFromLocalStorage(url){
-    blockedPagesArray = GetLocalStorage(key);
-    if(blockedPagesArray)blockedPagesArray = removeElementFromArray(url);
+    blockedPagesArray = [...GetLocalStorage()];
+    blockedPagesArray = [...removeElementFromArray(blockedPagesArray,url)];
     SetLocalStorage(blockedPagesArray);
 }
+
+
 function SetLocalStorage(ourArray){
     localStorage.setItem(key,JSON.stringify(ourArray));
 }
 function GetLocalStorage(){
+    var emptyArray =[""];
+    if(localStorage.getItem(key)===null)return emptyArray;
     var storedArray = localStorage.getItem(key);
-    ourArray = JSON.parse(storedArray);
-    if(ourArray!==null)return ourArray;
-    return new Array("");
+    var ourArray = JSON.parse(storedArray);
+    return ourArray;
+
+
 }
 function ShowLocalStorage(){
-    blockedPagesArray = GetLocalStorage();
-    console.log(blockedPagesArray);
+    blockedPagesArray = [GetLocalStorage()];
+    console.log("array:"+ blockedPagesArray);
 }
 //#endregion
 // #region ErrorPageGenerators
