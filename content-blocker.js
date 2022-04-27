@@ -47,7 +47,8 @@ if(addUrlButton){//          add button
     addUrlButton.addEventListener('click', async evt => {
         evt.preventDefault(); // prevents `submit` event from reloading the popup
         const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
-        const text = document.getElementById('input').value;// value from input
+        let text = tab.url;
+        console.log(text);
         await chrome.scripting.executeScript({
           target: {tabId: tab.id},
           func: (text) => {
@@ -61,7 +62,7 @@ if(addUrlButton){//          add button
         removeUrlButton.addEventListener('click', async evt => {
             evt.preventDefault(); // prevents `submit` event from reloading the popup
             const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
-            const text = document.getElementById('input').value;
+            let text = tab.url;//const text = document.getElementById('input').value;
             await chrome.scripting.executeScript({
               target: {tabId: tab.id},
               func: (text) => {
